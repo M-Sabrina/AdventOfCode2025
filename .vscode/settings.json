@@ -1,5 +1,4 @@
 {
-  "dotnet.defaultSolution": "day01.sln",
   "editor.formatOnSave": true,
   "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }
