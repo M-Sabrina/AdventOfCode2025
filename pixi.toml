@@ -1,0 +1,16 @@
+[workspace]
+authors = ["Sabrina Meindlhumer <58905866+M-Sabrina@users.noreply.github.com>"]
+channels = ["conda-forge"]
+name = "AdventOfCode2025"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+cpp = { cmd = "g++ day{{ num }}_cpp/main.cpp -o day{{ num }}_cpp/main && day{{ num }}_cpp/main", args = [
+    "num",
+] }
+cs = { cmd = "dotnet run --project day{{ num }}_cs", args = ["num"] }
+
+
+[dependencies]
+dotnet = ">=9.0.203,<10"
