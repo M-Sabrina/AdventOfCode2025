@@ -1,6 +1,4 @@
-﻿
-
-static void Part1(string file)
+﻿static void Part1(string file)
 {
     // To read a text file line by line
     if (File.Exists(file))
@@ -47,6 +45,22 @@ static void Part2(string file)
         {
             string dist = ln.Substring(1);
             int rot = Convert.ToInt32(dist);
+            while (rot > 0)
+            {
+                if (ln[0] == 'R')
+                {
+                    num = (num + 1) % 100;
+                }
+                else
+                {
+                    num = (num - 1) % 100;
+                }
+                rot -= 1;
+                if (num == 0)
+                {
+                    password += 1;
+                }
+            }
         }
 
         Console.WriteLine("Password for part 2: " + password);
