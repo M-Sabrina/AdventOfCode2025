@@ -9,7 +9,7 @@ version = "0.1.0"
 cpp = { cmd = "g++ day{{ num }}_cpp/main.cpp -o day{{ num }}_cpp/main && day{{ num }}_cpp/main", args = [
     "num",
 ] }
-cs = { cmd = "dotnet run day{{ num }}_cs/Program.cs", args = ["num"] }
+cs = { cmd = "dotnet run --project day{{ num }}_cs", args = ["num"] }
 
 
 [dependencies]
