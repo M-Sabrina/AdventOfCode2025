@@ -6,7 +6,7 @@ static void Part1(string file)
     if (File.Exists(file))
     {
         // Store each line in array of strings
-        string[] lines = File.ReadAllLines(file);
+        var lines = File.ReadAllLines(file);
 
         int num = 50;
         int password = 0;
@@ -37,7 +37,7 @@ static void Part2(string file)
     if (File.Exists(file))
     {
         // Store each line in array of strings
-        string[] lines = File.ReadAllLines(file);
+        var lines = File.ReadAllLines(file);
 
         int num = 50;
         int password = 0;
@@ -54,6 +54,6 @@ static void Part2(string file)
 
 }
 
-string file = "day01_cs/input.txt";
+var file = "day01_cs/input.txt";
 Part1(file);
 Part2(file);
