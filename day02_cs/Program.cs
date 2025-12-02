@@ -64,7 +64,7 @@ static void Part2(string file)
                     {
                         string pattern = number.Substring(0, patternLen);
                         int repeats = length / patternLen;
-                        string patternFull = String.Concat(Enumerable.Repeat(pattern, repeats));
+                        string patternFull = string.Concat(Enumerable.Repeat(pattern, repeats));
                         if (number == patternFull)
                         {
                             result += count;
