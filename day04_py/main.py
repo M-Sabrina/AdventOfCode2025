@@ -63,8 +63,8 @@ def part2(file):
     # print(map)
 
     count_accessible = 0
-    accessible_pos = []
     while True:
+        accessible_pos = []
         has_accessible = False
         for row in range(rows):
             for col in range(cols):
