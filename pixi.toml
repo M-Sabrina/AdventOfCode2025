@@ -10,7 +10,10 @@ cpp = { cmd = "g++ day{{ num }}_cpp/main.cpp -o day{{ num }}_cpp/main && day{{ n
     "num",
 ] }
 cs = { cmd = "dotnet run --project day{{ num }}_cs", args = ["num"] }
-
+py = { cmd = "python day{{ num }}_py/main.py", args = ["num"] }
 
 [dependencies]
 dotnet = ">=10.0.100,<11"
+python = ">=3.14.1,<3.15"
+numpy = ">=2.3.5,<3"
+pathlib = ">=1.0.1,<2"
