@@ -41,7 +41,7 @@ def part2(file):
     map_original = np.loadtxt(file, dtype=str)
     rows = map_original.size
     cols = len(map_original[0])
-    map = np.zeros((rows, cols))
+    map = np.zeros((rows, cols), dtype=int)
     for r, row in enumerate(map_original):
         for c, string in enumerate(row):
             if string == "^" or string == "S":
@@ -59,9 +59,9 @@ def part2(file):
                     beams_positions_new[col - 1] += beams_positions[col]
                 if col + 1 < cols:
                     beams_positions_new[col + 1] += beams_positions[col]
-        beams_positions = np.copy(beams_positions_new)
+        beams_positions = beams_positions_new
         # print(beams_positions)
-    print(f"Answer for part 2: {int(np.sum(beams_positions))}")
+    print(f"Answer for part 2: {beams_positions.sum()}")
 
 
 if __name__ == "__main__":
