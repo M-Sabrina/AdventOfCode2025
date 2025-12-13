@@ -1,5 +1,3 @@
-import bisect
-from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +15,7 @@ def part1(file):
         (x, y) = input[ind].split(",")
         red_tiles[ind][0] = int(x)
         red_tiles[ind][1] = int(y)
+    # print(f"{red_tiles=}")
     areas = []
     for ind1 in range(length):
         for ind2 in range(ind1 + 1, length):
@@ -36,6 +35,7 @@ def part2(file):
             input.append(line.strip())
     length = len(input)
 
+    # collect all xy red_tiles in list
     red_tiles = np.zeros((length, 2), dtype=int)
     for ind in range(length):
         (x, y) = input[ind].split(",")
@@ -43,6 +43,10 @@ def part2(file):
         y = int(y)
         red_tiles[ind][0] = x
         red_tiles[ind][1] = y
+    # print(f"{red_tiles=}")
+    # note: (x, y) -> x from left, y from top
+
+    # get all edges and collect them in set
     edges = []
     for ind in range(length):
         x1 = red_tiles[ind][0]
@@ -59,17 +63,9 @@ def part2(file):
         elif x1 == x2:
             for y in range(min(y1, y2), max(y1, y2) + 1):
                 edges.append((x1, y))
+    # print(f"{edges=}")
     edges = set(edges)
 
-    x_to_ys = defaultdict(list)
-    y_to_xs = defaultdict(list)
-    for x, y in edges:
-        x_to_ys[x].append(y)
-        y_to_xs[y].append(x)
-    for x in x_to_ys:
-        x_to_ys[x].sort()
-    for y in y_to_xs:
-        y_to_xs[y].sort()
     areas = []
     for ind1 in range(length):
         for ind2 in range(ind1 + 1, length):
@@ -84,11 +80,17 @@ def part2(file):
                 )
             )
     areas.sort(reverse=True)
+    # start with largest areas, check one by one until valid one is found
+    # print(f"{areas=}")
+
     for area, ind1, ind2 in areas:
+        # goal: check if valid
         x1 = red_tiles[ind1][0]
         y1 = red_tiles[ind1][1]
         x2 = red_tiles[ind2][0]
         y2 = red_tiles[ind2][1]
+
+        # check if all edges of rectangle are located within polygons's edges
         edges_rectangle = []
         for x in range(min(x1, x2), max(x1, x2) + 1):
             edges_rectangle.append((x, y1))
@@ -96,19 +98,20 @@ def part2(file):
         for y in range(min(y1, y2) + 1, max(y1, y2)):
             edges_rectangle.append((x1, y))
             edges_rectangle.append((x2, y))
+            # print(f"Checking square between ({x1}, {y1}) and ({x2}, {y2})")
+
         valid = True
+        # assume it is valid until shown otherwise, then break immediately
         for x, y in edges_rectangle:
             if (x, y) in edges:
                 continue
-            y_candidates = x_to_ys[x]
-            idx = bisect.bisect_left(y_candidates, y)
-            has_below = idx > 0
-            has_above = idx < len(y_candidates) - 0
-            x_candidates = y_to_xs[y]
-            idx2 = bisect.bisect_left(x_candidates, x)
-            has_left = idx2 > 0
-            has_right = idx2 < len(x_candidates) - 0
-            if not (has_below and has_above and has_left and has_right):
+            y_edges_below = [tup for tup in edges if tup[0] == x and tup[1] < y]
+            y_edges_above = [tup for tup in edges if tup[0] == x and tup[1] > y]
+            x_edges_below = [tup for tup in edges if tup[1] == y and tup[0] < x]
+            x_edges_above = [tup for tup in edges if tup[1] == y and tup[0] > y]
+            # print(f"Check if ({x},{y}) is within x range {x_edges_below}-{x_edges_above} and within y range {y_edges_below}-{y_edges_above}")
+            if not (x_edges_above or x_edges_below or y_edges_above or y_edges_below):
+                # if *any* tile is located outside shape's edges -> break and ignore rectangle
                 valid = False
                 break
         if valid:
