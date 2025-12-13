@@ -1,4 +1,5 @@
 import bisect
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -16,7 +17,6 @@ def part1(file):
         (x, y) = input[ind].split(",")
         red_tiles[ind][0] = int(x)
         red_tiles[ind][1] = int(y)
-    # print(f"{red_tiles=}")
     areas = []
     for ind1 in range(length):
         for ind2 in range(ind1 + 1, length):
@@ -36,7 +36,6 @@ def part2(file):
             input.append(line.strip())
     length = len(input)
 
-    # collect all xy red_tiles in list
     red_tiles = np.zeros((length, 2), dtype=int)
     for ind in range(length):
         (x, y) = input[ind].split(",")
@@ -44,10 +43,6 @@ def part2(file):
         y = int(y)
         red_tiles[ind][0] = x
         red_tiles[ind][1] = y
-    # print(f"{red_tiles=}")
-    # note: (x, y) -> x from left, y from top
-
-    # get all edges and collect them in set
     edges = []
     for ind in range(length):
         x1 = red_tiles[ind][0]
@@ -64,9 +59,17 @@ def part2(file):
         elif x1 == x2:
             for y in range(min(y1, y2), max(y1, y2) + 1):
                 edges.append((x1, y))
-    # print(f"{edges=}")
     edges = set(edges)
 
+    x_to_ys = defaultdict(list)
+    y_to_xs = defaultdict(list)
+    for x, y in edges:
+        x_to_ys[x].append(y)
+        y_to_xs[y].append(x)
+    for x in x_to_ys:
+        x_to_ys[x].sort()
+    for y in y_to_xs:
+        y_to_xs[y].sort()
     areas = []
     for ind1 in range(length):
         for ind2 in range(ind1 + 1, length):
@@ -81,11 +84,6 @@ def part2(file):
                 )
             )
     areas.sort(reverse=True)
-    # start with largest areas, check one by one until valid one is found
-    # print(f"{areas=}")
-
-    # Precompute edge lists for bisect
-    edge_list = list(edges)
     for area, ind1, ind2 in areas:
         x1 = red_tiles[ind1][0]
         y1 = red_tiles[ind1][1]
@@ -102,16 +100,14 @@ def part2(file):
         for x, y in edges_rectangle:
             if (x, y) in edges:
                 continue
-            # For vertical: check y values at x
-            y_candidates = sorted([yy for xx, yy in edge_list if xx == x])
+            y_candidates = x_to_ys[x]
             idx = bisect.bisect_left(y_candidates, y)
             has_below = idx > 0
-            has_above = idx < len(y_candidates)
-            # For horizontal: check x values at y
-            x_candidates = sorted([xx for xx, yy in edge_list if yy == y])
+            has_above = idx < len(y_candidates) - 0
+            x_candidates = y_to_xs[y]
             idx2 = bisect.bisect_left(x_candidates, x)
             has_left = idx2 > 0
-            has_right = idx2 < len(x_candidates)
+            has_right = idx2 < len(x_candidates) - 0
             if not (has_below and has_above and has_left and has_right):
                 valid = False
                 break
