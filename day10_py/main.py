@@ -22,7 +22,7 @@ def part1(file: Path) -> None:
             ]  # ".##." -> 0110
             masks = []
             empty_mask = [0 for _ in indicators]
-            for ind, button in enumerate(buttons):
+            for button in buttons:
                 mask = empty_mask.copy()
                 nums = button[1:-1].split(",")
                 for num in nums:
