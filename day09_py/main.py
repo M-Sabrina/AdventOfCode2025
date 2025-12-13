@@ -1,3 +1,4 @@
+import bisect
 from pathlib import Path
 
 import numpy as np
@@ -83,13 +84,13 @@ def part2(file):
     # start with largest areas, check one by one until valid one is found
     # print(f"{areas=}")
 
+    # Precompute edge lists for bisect
+    edge_list = list(edges)
     for area, ind1, ind2 in areas:
-        # goal: check if valid
         x1 = red_tiles[ind1][0]
         y1 = red_tiles[ind1][1]
         x2 = red_tiles[ind2][0]
         y2 = red_tiles[ind2][1]
-        # check if all edges of rectangle or located within large shape's edges
         edges_rectangle = []
         for x in range(min(x1, x2), max(x1, x2) + 1):
             edges_rectangle.append((x, y1))
@@ -97,29 +98,26 @@ def part2(file):
         for y in range(min(y1, y2) + 1, max(y1, y2)):
             edges_rectangle.append((x1, y))
             edges_rectangle.append((x2, y))
-            # print(f"Checking square between ({x1}, {y1}) and ({x2}, {y2})")
-            valid = True
-            # assume it is valid until shown otherwise, then break immediately
-            for x, y in edges_rectangle:
-                if (x, y) in edges:
-                    continue
-                y_edges_below = [tup for tup in edges if tup[0] == x and tup[1] < y]
-                y_edges_above = [tup for tup in edges if tup[0] == x and tup[1] > y]
-                x_edges_below = [tup for tup in edges if tup[1] == y and tup[0] < x]
-                x_edges_above = [tup for tup in edges if tup[1] == y and tup[0] > y]
-                # print(f"Check if ({x},{y}) is within x range {x_edges_below}-{x_edges_above} and within y range {y_edges_below}-{y_edges_above}")
-                if (
-                    not x_edges_above
-                    or not x_edges_below
-                    or not y_edges_above
-                    or not y_edges_below
-                ):
-                    # if *any* tile is located outside shape's edges -> break and ignore rectangle
-                    valid = False
-                    break
-            if valid:
-                print(f"Answer for part 2: {area}")
-                return
+        valid = True
+        for x, y in edges_rectangle:
+            if (x, y) in edges:
+                continue
+            # For vertical: check y values at x
+            y_candidates = sorted([yy for xx, yy in edge_list if xx == x])
+            idx = bisect.bisect_left(y_candidates, y)
+            has_below = idx > 0
+            has_above = idx < len(y_candidates)
+            # For horizontal: check x values at y
+            x_candidates = sorted([xx for xx, yy in edge_list if yy == y])
+            idx2 = bisect.bisect_left(x_candidates, x)
+            has_left = idx2 > 0
+            has_right = idx2 < len(x_candidates)
+            if not (has_below and has_above and has_left and has_right):
+                valid = False
+                break
+        if valid:
+            print(f"Answer for part 2: {area}")
+            return
 
 
 if __name__ == "__main__":
