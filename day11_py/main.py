@@ -21,7 +21,11 @@ def find_all_paths(
         yield from find_all_paths(graph, output, path)
 
 
-def part1(file: Path) -> None:
+def part1(test: bool = False) -> None:
+    if test:
+        file = Path("day11_py/test.txt")
+    else:
+        file = Path("day11_py/input.txt")
     graph = dict()
     with open(file) as f:
         for line in f:
@@ -40,8 +44,31 @@ def part1(file: Path) -> None:
     print(f"Answer for part 1: {answer}")
 
 
+def part2(test: bool = False) -> None:
+    if test:
+        file = Path("day11_py/test2.txt")
+    else:
+        file = Path("day11_py/input.txt")
+    graph = dict()
+    with open(file) as f:
+        for line in f:
+            line = line.strip().split(": ")
+            input = line[0]
+            outputs = line[1].split(" ")
+            graph[input] = outputs
+    # print(f"{graph:}")
+
+    path_generator = find_all_paths(graph, "svr")
+    answer = 0
+    # Iterate through the generator
+    for p in path_generator:
+        if "dac" in p and "fft" in p:
+            answer += 1
+
+    print(f"Answer for part 2: {answer}")
+
+
 if __name__ == "__main__":
-    file = Path("day11_py/input.txt")
-    # file = Path("day11_py/test.txt")
-    part1(file)
-    # part2(file)
+    test = False
+    part1(test)
+    part2(test)
